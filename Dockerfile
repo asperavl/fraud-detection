@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y awscli && apt-get clean
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY model/train.py
+COPY model/train.py .
 
 ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
