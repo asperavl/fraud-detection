@@ -27,6 +27,6 @@ jobs:
                 key: ${{ secrets.EC2_KEY }}
                 script: |
                     docker pull asperavl/fraud-detection
-                    doocker stop fraud-api || true
+                    docker stop fraud-api || true
                     docker rm fraud-api || true
                     docker run -d -p 8080:8080 --name fraud-api asperavl/fraud-detection
