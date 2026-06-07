@@ -1,0 +1,32 @@
+name: Deploy to EC2
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Build and push Docker image
+              run: |
+                docker login -u asperavl -p ${{ secrets.DOCKERHUB_TOKEN }}
+                docker build -t asperavl/fraud-detection .
+                docker push asperavl/fraud-detection
+
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                host: ${{ secrets.EC2_HOST }}
+                username: ${{ secrets.EC2_USER }}
+                key: ${{ secrets.EC2_KEY }}
+                script: |
+                    docker pull asperavl/fraud-detection
+                    doocker stop fraud-api || true
+                    docker rm fraud-api || true
+                    docker run -d -p 8080:8080 --name fraud-api asperavl/fraud-detection
